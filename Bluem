@@ -1,0 +1,51 @@
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import logging
+
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Sample users' balances
+users = {}
+
+# Command to start the bot
+def start(update, context):
+    update.message.reply_text("Welcome! Type /balance to check your balance.")
+
+# Command to check balance
+def balance(update, context):
+    user_id = update.message.from_user.id
+    balance = users.get(user_id, 0)
+    update.message.reply_text(f"Your current balance is: {balance} BTC.")
+
+# Command to earn points (example of simple interaction)
+def earn(update, context):
+    user_id = update.message.from_user.id
+    earned_points = 100  # Simulate earning points
+    users[user_id] = users.get(user_id, 0) + earned_points
+    update.message.reply_text(f"You earned {earned_points} BTC! Total balance: {users[user_id]} BTC.")
+
+# Command to invite a friend
+def invite(update, context):
+    update.message.reply_text("Share your referral link with friends to earn bonus points.")
+
+def main():
+    # Replace with your Telegram bot API token
+    updater = Updater("YOUR_API_TOKEN", use_context=True)
+
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
+
+    # Register command handlers
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("balance", balance))
+    dp.add_handler(CommandHandler("earn", earn))
+    dp.add_handler(CommandHandler("invite", invite))
+
+    # Start the Bot
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
